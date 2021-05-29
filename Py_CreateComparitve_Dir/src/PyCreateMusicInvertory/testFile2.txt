@@ -3,3 +3,6 @@ Line 2: This is the test file l2
 
 Line 4: This is the test file l4
 Line 5: This is the test file l5
+
+Line 6: This is the test file l6
+Line 7: This is the test file l7
