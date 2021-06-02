@@ -9,6 +9,9 @@ class Collect_Data:
         self.hostname = platform.uname().node
         if self.hostname == "MaxBookPro17OSX.local":
             self.base = "/Users/rduvalwa2/iTunes/iTunes Media/Music"
+        elif self.hostname == "OsxAir.hsd1.wa.comcast.net":
+            self.base = "/Users/rduvalwa2/Music/Music/Media.localized"
+
             
         self.fName = self.createName()
         print(self.fName)
@@ -18,7 +21,6 @@ class Collect_Data:
             print(e)
         
             
-    
     def get_albums(self):
 #        base =   "/Users/rduvalwa2/Music/iTunes/iTunes Music/Music"
         albums = []
@@ -39,9 +41,9 @@ class Collect_Data:
         index = 0
         musicDirs = os.listdir(self.base)
         for directory in musicDirs:
-            if os.path.isdir(self.base + "/" + directory):
-                artist.append((index, directory))
-                index = index + 1
+            if directory !=  ".locallized" and os.path.isdir(self.base + "/" + directory):
+                    artist.append((index, directory))
+                    index = index + 1
         return artist
 
     def get_all_songs(self):
@@ -49,18 +51,20 @@ class Collect_Data:
         albums = []
         songs = []
         artist = self.get_artist()
+        print(artist)
+        
         for a in artist:
-            if os.path.isdir(self.base + "/" + a[1]):
+            if a[1] != '.localized' and a[1] != '.DS_Store' and os.path.isdir(self.base + "/" + a[1]):
                 artist_albums = os.listdir(self.base + "/" + a[1])
                 for album in artist_albums:
-                    if album != '.DS_Store':
+#                    print(album)
+                    if album != '.DS_Store' and album != 'id.strings':
                         albums.append((a, album))
                         album_songs = os.listdir(self.base + "/" + a[1] + "/" + album)
                         for song in album_songs:
                             if song != '.DS_Store' and song != 'side1.mp3' and song != 'side2.mp3' and song != 'side3.mp3' and song != 'side4.mp3':
-                                songs.append(a[1] + "," + album + ","  + song + "\n")
+                                songs.append(a[1] + "\t" + album + "\t"  + song + "\n")
         return songs
-
     """
     Write Inventory File
     """
@@ -68,26 +72,13 @@ class Collect_Data:
     def Write_Inventory_File(self): 
 
         hostSongs = self.get_all_songs()
+        print("This is it", hostSongs)
         for dat in hostSongs:
-            print(str(dat))
+#            print(str(dat))
             self.filObj.write(str(dat))
+        self.filObj.write("Total: " + str(hostSongs.__len__()))
         self.filObj.close()
             
-    def get_songs(self, artist, album='all'):
-        base = self.base
-        albums = []
-        songs = []
-        newIndex = 0
-        if os.path.isdir(base + "/" + artist):
-                artist_albums = os.listdir(base + "/" + artist)
-#                print("artist_albums: ", artist_albums)
-                for al in artist_albums:
-                        if al != '.DS_Store':
-                            albums.append((artist, al))
-                            album_songs = os.listdir(base + "/" + artist + "/" + al)
-                            for song in album_songs:
-                                    songs.append((artist,al,song))
-        return songs
 
         
     def createName(self):
